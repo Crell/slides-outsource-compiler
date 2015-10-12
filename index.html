@@ -43,7 +43,13 @@
     ul.inline li {
       display: inline;
     }
+
+    .struck {
+      text-decoration: line-through;
+    }
   </style>
+
+  <script src="palantir-reveal/classer.js"></script>
 
 </head>
 <!-- Change body class to "dark" if you prefer a dark theme, or "light" if you'd rather have a light theme-->
@@ -129,7 +135,7 @@
         </aside>
       </section>
       <section>
-        <p class="bigtext">Humans got smarter by making tools do our work for us.</p>
+        <p class="bigtext">Humans got smarter by making tools<br />do our work for us.</p>
       </section>
     </section>
     <section>
@@ -138,9 +144,58 @@
       </section>
       <section>
         <p>Your job is...</p>
-        <p class="fragment">To write code</p>
-        <p class="fragment">To write error-free</p>
+        <p class="fragment" id="write-code">To write code</p>
+        <p class="fragment" id="write-error-free" data-classer="write-code" data-classer-class="struck">To write error-free code</p>
+        <p class="fragment" data-classer="write-error-free" data-classer-class="struck">To write correct error-free code</p>
+      </section>
+      <section>
+        <h2>Be smarter</h2>
+        <p class="fragment bigtext">Make your tools find the errors for you</p>
+        <aside class="notes">
+          <ul>
+            <li>You focus on business problems, not painful debugging</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Static analysis</h2>
+      </section>
+      <section>
+        <p id="wrong-look"><q>I can tell it's wrong just by looking at it</q></p>
+        <p class="fragment" data-classer="wrong-look" data-classer-class="struck"><q>My tools can tell it's wrong just by looking at it</q></p>
+        <aside class="notes">
+          <ul>
+            <li>Make it easy for your tools to tell it's wrong</li>
+            <li>Tool is PHP parser, IDE, separate tool, documentor, etc.</li>
+            <li>Pre-digest (execute) your code!</li>
+          </ul>
+        </aside>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>E_STRICT</h2>
+      </section>
 
+    </section>
+    <section>
+      <section>
+
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>Assertions</h2>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>Functional-style</h2>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>Typing</h2>
       </section>
     </section>
 
