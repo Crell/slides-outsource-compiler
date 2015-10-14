@@ -174,14 +174,217 @@
     </section>
     <section>
       <section>
-        <h2>E_STRICT</h2>
+        <h2>E_ALL</h2>
+      </section>
+      <section>
+        <h2>What is wrong with this picture?</h2>
+        <pre class="font--20"><code class="php" data-trim>
+function showForm($user) {
+    require_once('form_tools.php');
+
+    if ($user->isAdmin()) {
+        $isAdmin = true;
+    }
+
+    $out = "&lt;form>";
+    $out .= "&lt;input name='name'>";
+
+    if ($isAdmin) {
+        $out .= "&lt;select name='role'>";
+        $out .= "&lt;option>Admin&lt;/option>\n";
+        $out .= "&lt;option>Peon&lt;/option>\n";
+        $out .= "&lt;/option>";
+    }
+
+    $out .= "&lt;/form>";
+
+    return $out;
+}
+        </code></pre>
+        <pre class="fragment font--18"><code class="text">
+          PHP Notice:  Undefined variable: isAdmin in samples.php on line 15
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Is bug? Depends on form_tools.php</li>
+            <li>Plenty of other issues here, certainly...</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Slightly better</h2>
+        <pre class="font--20"><code class="php" data-trim>
+function showForm($user) {
+    require_once('form_tools.php');
+
+    $isAdmin = (bool)($user->isAdmin());
+
+    $out = "&lt;form>";
+    $out .= "&lt;input name='name'>";
+
+    if ($isAdmin) {
+        $out .= "&lt;select name='role'>";
+        $out .= "&lt;option>Admin&lt;/option>\n";
+        $out .= "&lt;option>Peon&lt;/option>\n";
+        $out .= "&lt;/option>";
+    }
+
+    $out .= "&lt;/form>";
+
+    return $out;
+}
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Showing errors highlights sloppy code</li>
+            <li>Sloppy code is a source of bugs</li>
+          </ul>
+        </aside>
       </section>
 
     </section>
     <section>
       <section>
-
+        <h2>Add information to analyze</h2>
+        <aside class="notes">
+          <ul>
+            <li>Can we code in a way that makes bugs even more obvious?</li>
+            <li>Include metadata about code, in code</li>
+          </ul>
+        </aside>
       </section>
+      <section>
+        <p class="bigtext">Approximate your code</p>
+        <aside class="notes">
+          <ul>
+            <li>Must be safe, ie, accurate</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Abstracting values</h2>
+        <pre class="font--20"><code class="php" data-trim>
+function sum_square($a, $b) {
+  return ($a * $a) + ($b * $b);
+}
+        </code></pre>
+        <pre class="fragment font--16"><code class="php" data-trim>
+Number {
+  POSITIVE,
+  NEGATIVE,
+  ZERO,
+  UNKNOWN
+}
+          </code></pre>
+          <pre class="fragment font--16"><code class="php" data-trim>
+POSITIVE * POSITIVE = POSITIVE;
+POSITIVE * NEGATIVE = NEGATIVE;
+NEGATIVE * NEGATIVE = POSITIVE;
+POSITIVE * ZERO = ZERO;
+NEGATIVE * ZERO  = ZERO;
+UNKNOWN  * ZERO = ZERO;
+UNKNOWN  * POSITIVE = UNKNOWN;
+UNKNOWN  * NEGATIVE = UNKNOWN;
+
+POSITIVE + POSITIVE = POSITIVE;
+NEGATIVE + NEGATIVE = NEGATIVE;
+POSITIVE + NEGATIVE = UNKNOWN;
+POSITIVE + ZERO = POSITIVE;
+NEGATIVE + ZERO = NEGATIVE;
+POSITIVE + UNKNOWN = UNKNOWN;
+NEGATIVE + UNKNOWN = UNKNOWN;
+UNKNOWN  + ZERO = UNKNOWN;
+        </code></pre>
+        <pre class="fragment font--18"><code class="text">
+          The result will always be POSITIVE
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>What are all possible returns? Infinite</li>
+            <li>Approximate to signed numbers; Predict?</li>
+            <li>We can do it in our heads; or tools can</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Errors</h2>
+        <pre class="font--18"><code class="php" data-trim>
+function bigger($x, $y) {
+  return ($x > $y) ? $x : 0;
+}
+
+function compute($a, $b, $c) {
+  return ($a + $b) / ($b * $c);
+}
+        </code></pre>
+        <pre class="fragment font--18"><code class="php" data-trim>
+compute($a, $b, is_bigger($x, $y));
+        </code></pre>
+        <p class="fragment" style="margin-top: 1em">What do we know?</p>
+        <aside class="notes">
+          <ul>
+            <li>If $b or $c are zero, fail</li>
+            <li>If $y > $x, fail (in combination)</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Errors</h2>
+        <pre class="font--18"><code class="php" data-trim>
+function bigger($x, $y) {
+  return ($x > $y) ? "the first" : "the second";
+}
+
+function compute($a, $b, $c) {
+  return ($a + $b) / ($b * $c);
+}
+        </code></pre>
+        <pre class="fragment font--18"><code class="php" data-trim>
+compute($a, $b, is_bigger($x, $y));
+        </code></pre>
+        <p class="fragment" style="margin-top: 1em">What do we know?</p>
+        <aside class="notes">
+          <ul>
+            <li>If $b or $c are zero, fail</li>
+            <li>If $a, $b, $c not nums, fail</li>
+            <li>This will always fail! (Except PHP)</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Put the abstract version in code</h2>
+        <pre class="fragment font--16"><code class="php" data-trim>
+function bigger(number $x, number $y) {
+  return ($x > $y) ? $x : 'the second';
+}
+function compute(number $a, number $b, number $c) : number {
+  return ($a + $b) / ($b * $c);
+}
+compute($a, $b, is_bigger($x, $y));
+        </code></pre>
+        <p class="fragment bigtext">May or may not work</p>
+        <pre class="fragment font--16"><code class="php" data-trim>
+function bigger(number $x, number $y) : string {
+  return ($x > $y) ? "the first" : "the second";
+}
+function compute(number $a, number $b, number $c) : number {
+  return ($a + $b) / ($b * $c);
+}
+compute($a, $b, is_bigger($x, $y));
+        </code></pre>
+        <p class="fragment bigtext">Obviously wrong!</p>
+        <pre class="fragment font--16"><code class="php" data-trim>
+function bigger(number $x, number $y) : number {
+  return ($x > $y) ? 1 : 2;
+}
+function compute(number $a, number $b, number $c) : number {
+  return ($a + $b) / ($b * $c);
+}
+compute($a, $b, is_bigger($x, $y));
+        </code></pre>
+        <p class="fragment bigtext">Cannot fail!</p>
+      </section>
+
     </section>
     <section>
       <section>
