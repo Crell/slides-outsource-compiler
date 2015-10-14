@@ -695,6 +695,99 @@ compute_shipping($dest, $user);
         </aside>
       </section>
 
+
+    </section>
+    <section>
+      <section>
+        <h2><code>&lt;aside></code></h2>
+      </section>
+      <section>
+        <h2>Return types</h2>
+        <ul>
+          <li class="fragment">New in PHP 7!</li>
+          <li class="fragment">Not nullable (good)</li>
+        </ul>
+        <aside class="notes">
+          <ul>
+            <li>Not null avoids errors</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+$r = new UserRepository();
+
+print $r->findById(123)->getAddress()->getStreet() . PHP_EOL;
+        </code></pre>
+        <pre class="fragment font--18"><code class="text" data-trim>
+          Method called on non-object
+        </code></pre>
+        <p style="margin-top: 1em" class="fragment">No NULL means:</p>
+        <ul>
+          <li class="fragment">Exception</li>
+          <li class="fragment">"Empty" value object</li>
+        </ul>
+        <aside class="notes">
+          <ul>
+            <li>Now you sigh and add a dozen if statements.</li>
+            <li>If typed returns, can't be null!  Blows up sooner.</li>
+            <li>Solution depends on use case.</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>For Repositories etc.</h2>
+        <pre class="font--18"><code class="php" data-trim>
+class UserRepository {
+  // ...
+
+  public function findById($id) : User {
+    if (/* can't find the user */) {
+     throw new InvalidArgumentException('No such User: ' . $id);
+    }
+    return $user;
+  }
+
+}
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>The rest of the code likely won't work anyway.</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>For Value objects</h2>
+        <pre class="font--18"><code class="php" data-trim>
+interface AddressInterface {
+  public function getStreet();
+  public function getCity();
+  public function getState();
+  public function getZip();
+}
+
+class EmptyAddress implements AddressInterface {
+  public function getStreet() { return ''; }
+  public function getCity() { return ''; }
+  public function getState() { return ''; }
+  public function getZip() { return ''; }
+}
+
+class Address implements AddressInterface {
+    // ...
+}
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>An empty value is useful, sometimes.</li>
+            <li>Very case-by-case.</li>
+            <li>Still better than NULL</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2><code>&lt;/aside></code></h2>
+      </section>
     </section>
     <section>
       <section>
