@@ -384,6 +384,316 @@ compute($a, $b, is_bigger($x, $y));
         </code></pre>
         <p class="fragment bigtext">Cannot fail!</p>
       </section>
+      <section>
+        <p class="bigtext">Tools can tell you that,<br />if you help them</p>
+        <aside class="notes">
+          <ul>
+            <li>Tool is runtime, compiler, IDE, analysis tool, etc.</li>
+          </ul>
+        </aside>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>Type systems</h2>
+        <div class="fragment">
+          <blockquote>A type system is a tractable syntactic method for proving
+            the absence of certain program behaviors by classifying phrases
+            according to the kinds of values they compute.</blockquote>
+          <p>&mdash;Benjamin Pierce, <a href="https://www.cis.upenn.edu/~bcpierce/tapl/">Types and Programming Languages</a></p>
+        </div>
+        <p class="fragment"><q>Semantic metadata about code we can analyze to find bugs</q></p>
+        <aside class="notes">
+          <ul>
+            <li>Hard to define; Soft Eng and Comp Sci have used differently</li>
+            <li>Many different types of type system</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Typing crash course</h2>
+        <div style="text-align: left">
+          <dl class="fragment">
+            <dt>Static types</dt>
+            <dd>Specified ahead of time, analyzed by the compiler</dd>
+            <dt>Dynamic types</dt>
+            <dd>Derived by the compiler/runtime on the fly</dd>
+          </dl>
+
+          <dl class="fragment" style="margin-top: 1em;">
+            <dt>Explicit types</dt>
+            <dd>Specified in the source code by a human</dd>
+            <dt>Implicit types</dt>
+            <dd>Compiler derives types from context</dd>
+          </dl>
+
+          <dl class="fragment" style="margin-top: 1em;">
+            <dt>Strict types (PHP)</dt>
+            <dd>Variables only change type explicitly</dd>
+            <dt>Weak types (PHP)</dt>
+            <dd>Variables can change type implicitly where possible</dd>
+          </dl>
+        </div>
+        <aside class="notes">
+          <ul>
+            <li>I'm arguing you should use explicit static types</li>
+            <li>PHP doesn't do type inference, so explicitness is needed</li>
+          </ul>
+        </aside>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>Types in PHPractice</h2>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+function distance_between($src, $dest) {
+  // ...
+}
+
+function compute_shipping($src, $user) {
+  $dest = $user['addres'];
+
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+        </code></pre>
+        <p class="bigtext fragment">HTTP Referer header, anyone?</p>
+        <aside class="notes">
+          <ul>
+            <li>'addres' may not be a typo</li>
+            <li>Dialect differences; canceled vs cancelled</li>
+            <li>Assume for now it's a bug</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+function compute_shipping($src, $user) {
+  $dest = $user['address'];
+
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Is that field even defined?</li>
+            <li>Is it an array?</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+function compute_shipping($src, $user) {
+  $dest = $user['address'];
+
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+$user = 123;
+compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Kaboom!</li>
+            <li>Type inference would catch this, but PHP lacks it</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+function compute_shipping($src, array $user) {
+  $dest = $user['address'];
+
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+$user = 123;
+compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Now PHP will catch it for us</li>
+            <li>Still don't know if 'address' is defined...</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+function compute_shipping($src, array $user) {
+  $dest = $user['address'];
+
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+$user = ['id' => 123];
+compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>And we still can't verify that it's correct</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+class User {
+  public $id;
+  public $address;
+
+  public function __construct($id, $address) {
+    $this->id = $id;
+    $this->address = $address;
+  }
+}
+
+function compute_shipping($src, User $user) {
+  $dest = $user->address;
+
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+$user = new User(/*...*/);
+
+compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Now we know what the property is called!</li>
+            <li>Property must exist... but is it null? A string?</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+function compute_shipping($src, User $user) {
+  $dest = $user->address;
+
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+$user = new User(123, [
+  'street' => '456 Main',
+  'city' => 'Chicago',
+  'state' => 'IL',
+  'zip' => 60614,
+]);
+
+compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+        </code></pre>
+        <p class="fragment">Does this still work? Up to <code>distance_between()</code></p>
+        <aside class="notes">
+          <ul>
+            <li>Nope, it's an array!</li>
+            <li>Does this work?</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--16"><code class="php" data-trim>
+class User {
+  public $id;
+  public $address;
+
+  public function __construct($id, Address $address) {
+    $this->id = $id;
+    $this->address = $address;
+  }
+}
+
+class Address {
+  public $street;
+  public $city;
+  public $state;
+  public $zip;
+}
+
+function distance_between(Address $src, Address $dest) {
+  // ...
+}
+
+function compute_shipping($src, User $user) {
+  $dest = $user->address;
+  $distance = distance_between($src, $dest);
+  return $distance * .5; // 50 cents/mile
+}
+
+$u_address = new Address();
+$u_address->street = '456 Main St.';
+$u_address->city = 'Chicago';
+$u_address->state = 'IL';
+$u_address->zip = 60614;
+
+$user = new User(123, $u_address);
+$dest = new Address(); // ...
+compute_shipping($dest, $user);
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Statically tell we won't get a syntax error!</li>
+            <li>But what if $user->address gets changed?</li>
+            <li>PHP has no property types (yet)</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+class User {
+  protected $id;
+  protected $address;
+
+  public function __construct($id, Address $address) {
+    $this->id = $id;
+    $this->address = $address;
+  }
+
+  public function getAddress() : Address {
+    return $this->address;
+  }
+}
+
+function compute_shipping($src, User $user) {
+  $dest = $user->getAddress();
+
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+$u_address = new Address(); // ...
+
+$user = new User(123, $u_address);
+
+$dest = new Address(); // ...
+
+compute_shipping($dest, $user);
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Return types! New in PHP 7.</li>
+            <li>Not nullable, which is safer.</li>
+            <li>Protected var + typing = can't not be Address</li>
+          </ul>
+        </aside>
+      </section>
 
     </section>
     <section>
@@ -396,12 +706,6 @@ compute($a, $b, is_bigger($x, $y));
         <h2>Functional-style</h2>
       </section>
     </section>
-    <section>
-      <section>
-        <h2>Typing</h2>
-      </section>
-    </section>
-
 
 
     <div style="display: none">
@@ -414,6 +718,14 @@ compute($a, $b, is_bigger($x, $y));
       Return typing
 
     </div>
+
+    <section id="resources">
+      <h2>Further reading</h2>
+      <ul>
+        <li><a href="http://computationbook.com/">Understanding Computation</a>, by Tom Stuart</li>
+        <li><a href="https://cdsmith.wordpress.com/2011/01/09/an-old-article-i-wrote/">What to know before debating type systems</a>, by Chris Smith</li>
+      </ul>
+    </section>
 
     <section id="final">
       <h2>Larry Garfield</h2>
