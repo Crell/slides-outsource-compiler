@@ -318,7 +318,7 @@ function compute($a, $b, $c) {
 }
         </code></pre>
         <pre class="fragment font--18"><code class="php" data-trim>
-compute($a, $b, is_bigger($x, $y));
+compute($a, $b, bigger($x, $y));
         </code></pre>
         <p class="fragment" style="margin-top: 1em">What do we know?</p>
         <aside class="notes">
@@ -340,7 +340,7 @@ function compute($a, $b, $c) {
 }
         </code></pre>
         <pre class="fragment font--18"><code class="php" data-trim>
-compute($a, $b, is_bigger($x, $y));
+compute($a, $b, bigger($x, $y));
         </code></pre>
         <p class="fragment" style="margin-top: 1em">What do we know?</p>
         <aside class="notes">
@@ -360,7 +360,7 @@ function bigger(number $x, number $y) {
 function compute(number $a, number $b, number $c) : number {
   return ($a + $b) / ($b * $c);
 }
-compute($a, $b, is_bigger($x, $y));
+compute($a, $b, bigger($x, $y));
         </code></pre>
         <p class="fragment bigtext">May or may not work</p>
         <pre class="fragment font--16"><code class="php" data-trim>
@@ -370,7 +370,7 @@ function bigger(number $x, number $y) : string {
 function compute(number $a, number $b, number $c) : number {
   return ($a + $b) / ($b * $c);
 }
-compute($a, $b, is_bigger($x, $y));
+compute($a, $b, bigger($x, $y));
         </code></pre>
         <p class="fragment bigtext">Obviously wrong!</p>
         <pre class="fragment font--16"><code class="php" data-trim>
@@ -380,7 +380,7 @@ function bigger(number $x, number $y) : number {
 function compute(number $a, number $b, number $c) : number {
   return ($a + $b) / ($b * $c);
 }
-compute($a, $b, is_bigger($x, $y));
+compute($a, $b, bigger($x, $y));
         </code></pre>
         <p class="fragment bigtext">Cannot fail!</p>
       </section>
@@ -448,16 +448,16 @@ compute($a, $b, is_bigger($x, $y));
       </section>
       <section>
         <pre class="font--18"><code class="php" data-trim>
-function distance_between($src, $dest) {
-  // ...
-}
-
 function compute_shipping($src, $user) {
   $dest = $user['addres'];
 
   $distance = distance_between($src, $dest);
 
   return $distance * .5; // 50 cents/mile
+}
+
+function distance_between($src, $dest) {
+  // ...
 }
 
 compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
@@ -486,7 +486,7 @@ compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
         <aside class="notes">
           <ul>
             <li>Is that field even defined?</li>
-            <li>Is it an array?</li>
+            <li>Is $user an array?</li>
           </ul>
         </aside>
       </section>
@@ -782,6 +782,16 @@ class Address implements AddressInterface {
             <li>An empty value is useful, sometimes.</li>
             <li>Very case-by-case.</li>
             <li>Still better than NULL</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <p class="bigtext"><a href="http://www.garfieldtech.com/blog/empty-return-values">Returning false on a getter</a> is a<br />big 'screw you' to your users</p>
+        <aside class="notes">
+          <ul>
+            <li>Undermines type expectations</li>
+            <li>Forces callers to litter code with if-checks.</li>
+            <li>User can't rely on types to avoid errors</li>
           </ul>
         </aside>
       </section>
