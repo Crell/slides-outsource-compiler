@@ -868,7 +868,7 @@ compute_shipping($src, $user->getAddress());
       </section>
       <section>
         <pre class="font--18"><code class="php" data-trim>
-function compute_shipping($src, AddressInterface $dest) {
+function compute_shipping(AddressInterface $src, AddressInterface $dest) : float {
   $distance = distance_between($src, $dest);
 
   return $distance * .5; // 50 cents/mile
@@ -910,30 +910,221 @@ compute_shipping($src, $user->getAddress());
           </ul>
         </aside>
       </section>
-    </section>
-    <section>
       <section>
-        <h2>Assertions</h2>
+        <h2>Full type list</h2>
+        <ul class="fragment">
+          <li>int</li>
+          <li>float</li>
+          <li>string</li>
+          <li>bool</li>
+          <li>array</li>
+          <li>Any class name</li>
+          <li>callable</li>
+        </ul>
+        <aside class="notes">
+          <ul>
+            <li>All usable as parameters or returns</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+interface AddressInterface {
+  public function getStreet();
+  public function getCity();
+  public function getState();
+  public function getZip();
+}
+        </code></pre>
+        <p class="fragment">Is getStreet() a string or object?</p>
+        <aside class="notes">
+          <ul>
+            <li>Object with number, name, apartment?</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+interface AddressInterface {
+  public function getStreet() : string;
+  public function getCity() : string;
+  public function getState() : string;
+  public function getZip() : string;
+}
+        </code></pre>
+        <pre class="fragment font--18"><code class="php" data-trim>
+class Address implements AddressInterface {
+  public function __construct(string $street, string $city, string $state, string $zip) {
+    // ...
+  }
+  // ...
+}
+        </code></pre>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+$u_address = new Address('massechusetts');
+$user = new User(123, $u_address);
+
+$src = new Address('123 Warehouse St.', 'Las Vegas', 'NV', '');
+compute_shipping($src, $user->getAddress());
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Point out error. Becomes 1099 in Octal</li>
+            <li>Biggest dispute in PHP scalar typing</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Strict vs Weak mode</h2>
+        <p class="fragment">Weak by default</p>
+        <aside class="notes">
+          <ul>
+            <li>PHP used to auto-coercing, because web</li>
+            <li>Unsafe</li>
+            <li>Undermines type checking</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Strict mode</h2>
+        <p>Address.php</p>
+        <pre class="font--18"><code class="php" data-trim>
+declare('strict_types=1');
+
+class Address implements AddressInterface {
+  public function __construct(string $street, string $city, string $state, string $zip) {
+    // ...
+  }
+  public function getZip() : string {
+    return $this->zip;
+  }
+
+
+  // ...
+}
+        </code></pre>
+        <p class="fragment">Affects calls and returns <em>from</em> this file</p>
+        <aside class="notes">
+          <ul>
+            <li>If $this->zip not a string, TypeError thrown</li>
+            <li>Tooling can spot it!</li>
+            <li>Does not affect constructor!</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Strict mode</h2>
+        <p>setup.php</p>
+        <pre class="font--18"><code class="php" data-trim>
+declare('strict_types=1');
+
+$u_address = new Address('massechusetts');
+$user = new User(123, $u_address);
+
+$src = new Address('123 Warehouse St.', 'Las Vegas', 'NV', '');
+compute_shipping($src, $user->getAddress());
+        </code></pre>
+        <p class="fragment">Affects calls and returns <em>from</em> this file</p>
+        <aside class="notes">
+          <ul>
+            <li>Will throw TypeError</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Casting in strict mode</h2>
+        <p>* int converts to float automatically</p>
+        <aside class="notes">
+          <ul>
+            <li>Otherwise, (cast) or redesign</li>
+            <li>Really, redesign</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Using strict types</h2>
+        <p class="fragment bigtext">90% of the time</p>
+        <p class="fragment bigtext">(Everywhere except IO)</p>
+        <aside class="notes">
+          <ul>
+            <li>Catches the most bugs</li>
+            <li>Pass data FROM IO to a typed function, weak, coerce</li>
+            <li>Get the most type safety</li>
+            <li>Drives good design; separate methods, predictable returns, etc.</li>
+          </ul>
+        </aside>
       </section>
     </section>
     <section>
       <section>
-        <h2>Functional-style</h2>
+        <h2>No silver bullet</h2>
+      </section>
+      <section>
+        <p id="types-find-bugs" class="bigtext">Types find bugs</p>
+        <p class="bigtext fragment" data-classer="types-find-bugs" data-classer-class="struck">Types find many bugs</p>
+        <aside class="notes">
+          <ul>
+            <li>Many, not all</li>
+            <li>Like testing</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <p>Type checkers have false positives</p>
+        <pre class="font--18"><code class="php" data-trim>
+class ThingOne {
+  public function helpCat() { /* ... */ }
+}
+
+class ThingTwo {
+  public function helpCat() { /* ... */ }
+}
+
+class CatInTheHat {
+
+  public function welcome(ThingOne $thing) {
+    $thing->helpCat();
+  }
+}
+        </code></pre>
+        <p class="fragment">Type checking will reject valid programs!</p>
+        <aside class="notes">
+          <ul>
+            <li>Type checker will fail</li>
+            <li>May be valid otherwise</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>So, testing?</h2>
+        <p>Dijkstra quote on testing</p>
+        <p class="fragment">Testing will accept invalid programs!</p>
+      </section>
+      <section>
+        <p class="fragment">Type first, then test</p>
+        <aside class="notes">
+          <ul>
+            <li>Strict typing requires fewer tests</li>
+            <li>Fewer is not none</li>
+            <li>Many errors become syntactically impossible, so no need to test</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <p class="bigtext">We've outsourced testing to language syntax!</p>
+      </section>
+      <section>
+        <img src="assets/brain-power.jpg" alt="Save your brains!" data-credit="http://aboutmodafinil.com/" />
+        <aside class="notes">
+          <ul>
+            <li>Save your brains for the real work</li>
+            <li>Save your code for business logic</li>
+          </ul>
+        </aside>
       </section>
     </section>
-
-
-    <div style="display: none">
-      Stomach story
-      E_ALL | E_STRICT
-      assertions
-      functional coding style (fewer off-by-one)
-
-      Strict Typing
-      Return typing
-
-    </div>
-
     <section id="resources">
       <h2>Further reading</h2>
       <ul>
@@ -941,14 +1132,12 @@ compute_shipping($src, $user->getAddress());
         <li><a href="https://cdsmith.wordpress.com/2011/01/09/an-old-article-i-wrote/">What to know before debating type systems</a>, by Chris Smith</li>
       </ul>
     </section>
-
     <section id="final">
       <h2>Larry Garfield</h2>
       <p>Senior Architect, <a href="http://www.palantir.net/">Palantir.net</a></p>
       <p>Let's Make Something Good Together.</p>
       <p>Keep tabs on our work at <a href="http://twitter.com/Palantir">@Palantir</a></p>
     </section>
-
   </div>
 
 </div>
