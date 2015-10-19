@@ -694,8 +694,6 @@ compute_shipping($dest, $user);
           </ul>
         </aside>
       </section>
-
-
     </section>
     <section>
       <section>
@@ -797,6 +795,120 @@ class Address implements AddressInterface {
       </section>
       <section>
         <h2><code>&lt;/aside></code></h2>
+      </section>
+    </section>
+    <section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+class User {
+  protected $id;
+  protected $address;
+
+  public function __construct($id, AddressInterface $address) {
+    $this->id = $id;
+    $this->address = $address;
+  }
+
+  public function getAddress() : AddressInterface {
+    return $this->address;
+  }
+}
+
+function compute_shipping(AddressInterface $src, User $user) {
+  $dest = $user->getAddress();
+  $distance = distance_between($src, $dest);
+  return $distance * .5; // 50 cents/mile
+}
+
+function distance_between(AddressInterface $src, AddressInterface $dest) {
+  // ...
+}
+
+$u_address = new Address(); // ...
+$user = new User(123, $u_address);
+
+$dest = new Address(); // ...
+compute_shipping($dest, $user);
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Add type to $src, since PHP has no inference</li>
+            <li>We have a checkable definition of User</li>
+            <li>We have a checkable definition of Address</li>
+            <li>Tools can verify those</li>
+            <li>Suggestion of Demeter? Only need Address</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+function compute_shipping($src, AddressInterface $dest) {
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+function distance_between(AddressInterface $src, AddressInterface $dest) {
+  // ...
+}
+
+$u_address = new Address(); // ...
+$user = new User(123, $u_address);
+
+$dest = new Address(); // ...
+compute_shipping($dest, $user->getAddress());
+        </code></pre>
+        <p class="fragment">What about distance_between()?</p>
+        <aside class="notes">
+          <ul>
+            <li>Could have made that change before, but more obvious when typed</li>
+            <li>distance_between() seems to return number. int or float?</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <pre class="font--18"><code class="php" data-trim>
+function compute_shipping($src, AddressInterface $dest) {
+  $distance = distance_between($src, $dest);
+
+  return $distance * .5; // 50 cents/mile
+}
+
+function distance_between(AddressInterface $src, AddressInterface $dest) : int {
+  // ...
+}
+
+$u_address = new Address(); // ...
+$user = new User(123, $u_address);
+
+$dest = new Address(); // ...
+compute_shipping($dest, $user->getAddress());
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Assume whole miles. Round up, because greedy.</li>
+          </ul>
+        </aside>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>Scalar typing</h2>
+        <p class="bigtext fragment"><q>Everyone here owes<br />Andrea Faulds and Anthony Ferrara a drink</q></p>
+      </section>
+      <section>
+        <h2>New type specs in PHP 7</h2>
+        <ul class="fragment">
+          <li>int</li>
+          <li>float</li>
+          <li>string</li>
+          <li>bool</li>
+        </ul>
+        <aside class="notes">
+          <ul>
+            <li>No integer/boolean</li>
+          </ul>
+        </aside>
       </section>
     </section>
     <section>
