@@ -643,8 +643,8 @@ $u_address->state = 'IL';
 $u_address->zip = 60614;
 
 $user = new User(123, $u_address);
-$dest = new Address(); // ...
-compute_shipping($dest, $user);
+$src = new Address(); // ...
+compute_shipping($src, $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -682,9 +682,9 @@ $u_address = new Address(); // ...
 
 $user = new User(123, $u_address);
 
-$dest = new Address(); // ...
+$src = new Address(); // ...
 
-compute_shipping($dest, $user);
+compute_shipping($src, $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -827,8 +827,8 @@ function distance_between(AddressInterface $src, AddressInterface $dest) {
 $u_address = new Address(); // ...
 $user = new User(123, $u_address);
 
-$dest = new Address(); // ...
-compute_shipping($dest, $user);
+$src = new Address(); // ...
+compute_shipping($src, $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -855,8 +855,8 @@ function distance_between(AddressInterface $src, AddressInterface $dest) {
 $u_address = new Address(); // ...
 $user = new User(123, $u_address);
 
-$dest = new Address(); // ...
-compute_shipping($dest, $user->getAddress());
+$src = new Address(); // ...
+compute_shipping($src, $user->getAddress());
         </code></pre>
         <p class="fragment">What about distance_between()?</p>
         <aside class="notes">
@@ -881,8 +881,8 @@ function distance_between(AddressInterface $src, AddressInterface $dest) : int {
 $u_address = new Address(); // ...
 $user = new User(123, $u_address);
 
-$dest = new Address(); // ...
-compute_shipping($dest, $user->getAddress());
+$src = new Address(); // ...
+compute_shipping($src, $user->getAddress());
         </code></pre>
         <aside class="notes">
           <ul>
