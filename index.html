@@ -988,6 +988,16 @@ compute_shipping($src, $user->getAddress());
         </aside>
       </section>
       <section>
+        <h2>Casting in weak mode</h2>
+        <p>* string -> int may E_NOTICE</p>
+        <aside class="notes">
+          <ul>
+            <li>Casts like we're used to</li>
+            <li>String -> int notice if non-numeric.</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
         <h2>Strict mode</h2>
         <p>Address.php</p>
         <pre class="font--18"><code class="php" data-trim>
@@ -1056,6 +1066,16 @@ compute_shipping($src, $user->getAddress());
           </ul>
         </aside>
       </section>
+      <section>
+        <p class="bigtext">Also, Documentation</p>
+        <aside class="notes">
+          <ul>
+            <li>"Good code is self-documenting"</li>
+            <li>Static type or you're a hypocrite</li>
+            <li>Static types can't go out of date like docblocs</li>
+          </ul>
+        </aside>
+      </section>
     </section>
     <section>
       <section>
@@ -1099,7 +1119,8 @@ class CatInTheHat {
       </section>
       <section>
         <h2>So, testing?</h2>
-        <p>Dijkstra quote on testing</p>
+        <p><q>Program testing can be used to show the presence of bugs, but never to show their absence.</q></p>
+        <p>&mdash; Edsger W. Dijkstra</p>
         <p class="fragment">Testing will accept invalid programs!</p>
       </section>
       <section>
