@@ -77,7 +77,6 @@
           <li>Senior Architect, <a href="http://www.palantir.net/">Palantir.net</a></li>
           <li style="margin-top: 1em;">Drupal 8 Web Services Lead</li>
           <li style="margin-top: 1em;">Drupal Representative, <a href="http://www.php-fig.org/">PHP-FIG</a></li>
-          <li style="margin-top: 1em;">Advisor, Drupal Association</li>
           <li style="margin-top: 1em;"><code>implements Huggable</code></li>
         </ul>
       </div>
@@ -136,6 +135,11 @@
       </section>
       <section>
         <p class="bigtext">Humans got smarter by making tools<br />do our work for us.</p>
+        <aside class="notes">
+          <ul>
+            <li>Computers are tools to do boring rote work</li>
+          </ul>
+        </aside>
       </section>
     </section>
     <section>
@@ -145,8 +149,7 @@
       <section>
         <p>Your job is...</p>
         <p class="fragment" id="write-code">To write code</p>
-        <p class="fragment" id="write-error-free" data-classer="write-code" data-classer-class="struck">To write error-free code</p>
-        <p class="fragment" data-classer="write-error-free" data-classer-class="struck">To write correct error-free code</p>
+        <p class="fragment" data-classer="write-code" data-classer-class="struck">To write correct (error-free) code</p>
       </section>
       <section>
         <h2>Be smarter</h2>
@@ -241,7 +244,15 @@ function showForm($user) {
           </ul>
         </aside>
       </section>
-
+      <section>
+        <h2><a href="http://phpmd.org/">PHP Mess Detector</a></h2>
+        <aside class="notes">
+          <ul>
+            <li>Static analyzer</li>
+            <li>Finds "sloppy" practices</li>
+          </ul>
+        </aside>
+      </section>
     </section>
     <section>
       <section>
@@ -257,7 +268,7 @@ function showForm($user) {
         <p class="bigtext">Approximate your code</p>
         <aside class="notes">
           <ul>
-            <li>Must be safe, ie, accurate</li>
+            <li>Add "junior version" of code</li>
           </ul>
         </aside>
       </section>
@@ -281,7 +292,7 @@ POSITIVE * POSITIVE = POSITIVE;
 POSITIVE * NEGATIVE = NEGATIVE;
 NEGATIVE * NEGATIVE = POSITIVE;
 POSITIVE * ZERO = ZERO;
-NEGATIVE * ZERO  = ZERO;
+NEGATIVE * ZERO = ZERO;
 UNKNOWN  * ZERO = ZERO;
 UNKNOWN  * POSITIVE = UNKNOWN;
 UNKNOWN  * NEGATIVE = UNKNOWN;
@@ -296,7 +307,7 @@ NEGATIVE + UNKNOWN = UNKNOWN;
 UNKNOWN  + ZERO = UNKNOWN;
         </code></pre>
         <pre class="fragment font--18"><code class="text">
-          The result will always be POSITIVE
+          The result will always be POSITIVE or ZERO, not NEGATIVE.
         </code></pre>
         <aside class="notes">
           <ul>
@@ -963,7 +974,7 @@ class Address implements AddressInterface {
       </section>
       <section>
         <pre class="font--18"><code class="php" data-trim>
-$u_address = new Address('massechusetts');
+$u_address = new Address('45 Hull St', 'Boston', 'MA', 02113);
 $user = new User(123, $u_address);
 
 $src = new Address('123 Warehouse St.', 'Las Vegas', 'NV', '');
@@ -1001,7 +1012,7 @@ compute_shipping($src, $user->getAddress());
         <h2>Strict mode</h2>
         <p>Address.php</p>
         <pre class="font--18"><code class="php" data-trim>
-declare('strict_types=1');
+declare(strict_types=1);
 
 class Address implements AddressInterface {
   public function __construct(string $street, string $city, string $state, string $zip) {
@@ -1028,9 +1039,9 @@ class Address implements AddressInterface {
         <h2>Strict mode</h2>
         <p>setup.php</p>
         <pre class="font--18"><code class="php" data-trim>
-declare('strict_types=1');
+declare(strict_types=1);
 
-$u_address = new Address('massechusetts');
+$u_address = new Address('45 Hull St', 'Boston', 'MA', 02113);
 $user = new User(123, $u_address);
 
 $src = new Address('123 Warehouse St.', 'Las Vegas', 'NV', '');
