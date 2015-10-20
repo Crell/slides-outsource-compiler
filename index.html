@@ -44,6 +44,10 @@
       display: inline;
     }
 
+    blockquote em {
+      color: #9fc855;
+    }
+
     .struck {
       text-decoration: line-through;
     }
@@ -189,22 +193,20 @@ function showForm($user) {
         $isAdmin = true;
     }
 
-    $out = "&lt;form>";
-    $out .= "&lt;input name='name'>";
+    $out = "&lt;form>\n&lt;input name='name'>";
 
     if ($isAdmin) {
-        $out .= "&lt;select name='role'>";
+        $out .= "&lt;select name='role'>\n";
         $out .= "&lt;option>Admin&lt;/option>\n";
         $out .= "&lt;option>Peon&lt;/option>\n";
         $out .= "&lt;/option>";
     }
 
     $out .= "&lt;/form>";
-
     return $out;
 }
         </code></pre>
-        <pre class="fragment font--18"><code class="text">
+        <pre class="fragment font--18"><code class="plaintext">
           PHP Notice:  Undefined variable: isAdmin in samples.php on line 15
         </code></pre>
         <aside class="notes">
@@ -222,8 +224,7 @@ function showForm($user) {
 
     $isAdmin = (bool)($user->isAdmin());
 
-    $out = "&lt;form>";
-    $out .= "&lt;input name='name'>";
+    $out = "&lt;form>\n&lt;input name='name'>";
 
     if ($isAdmin) {
         $out .= "&lt;select name='role'>";
@@ -233,7 +234,6 @@ function showForm($user) {
     }
 
     $out .= "&lt;/form>";
-
     return $out;
 }
         </code></pre>
@@ -288,26 +288,17 @@ Number {
 }
           </code></pre>
           <pre class="fragment font--16"><code class="php" data-trim>
-POSITIVE * POSITIVE = POSITIVE;
-POSITIVE * NEGATIVE = NEGATIVE;
-NEGATIVE * NEGATIVE = POSITIVE;
-POSITIVE * ZERO = ZERO;
-NEGATIVE * ZERO = ZERO;
-UNKNOWN  * ZERO = ZERO;
-UNKNOWN  * POSITIVE = UNKNOWN;
-UNKNOWN  * NEGATIVE = UNKNOWN;
-
-POSITIVE + POSITIVE = POSITIVE;
-NEGATIVE + NEGATIVE = NEGATIVE;
-POSITIVE + NEGATIVE = UNKNOWN;
-POSITIVE + ZERO = POSITIVE;
-NEGATIVE + ZERO = NEGATIVE;
-POSITIVE + UNKNOWN = UNKNOWN;
-NEGATIVE + UNKNOWN = UNKNOWN;
-UNKNOWN  + ZERO = UNKNOWN;
+POSITIVE * POSITIVE = POSITIVE;          POSITIVE + POSITIVE = POSITIVE;
+POSITIVE * NEGATIVE = NEGATIVE;          NEGATIVE + NEGATIVE = NEGATIVE;
+NEGATIVE * NEGATIVE = POSITIVE;          POSITIVE + NEGATIVE = UNKNOWN;
+POSITIVE * ZERO = ZERO;                  POSITIVE + ZERO = POSITIVE;
+NEGATIVE * ZERO = ZERO;                  NEGATIVE + ZERO = NEGATIVE;
+UNKNOWN  * ZERO = ZERO;                  POSITIVE + UNKNOWN = UNKNOWN;
+UNKNOWN  * POSITIVE = UNKNOWN;           NEGATIVE + UNKNOWN = UNKNOWN;
+UNKNOWN  * NEGATIVE = UNKNOWN;           UNKNOWN  + ZERO = UNKNOWN;
         </code></pre>
         <pre class="fragment font--18"><code class="text">
-          The result will always be POSITIVE or ZERO, not NEGATIVE.
+          The result will always be POSITIVE or ZERO, never NEGATIVE.
         </code></pre>
         <aside class="notes">
           <ul>
@@ -349,8 +340,7 @@ function bigger($x, $y) {
 function compute($a, $b, $c) {
   return ($a + $b) / ($b * $c);
 }
-        </code></pre>
-        <pre class="fragment font--18"><code class="php" data-trim>
+
 compute($a, $b, bigger($x, $y));
         </code></pre>
         <p class="fragment" style="margin-top: 1em">What do we know?</p>
@@ -368,32 +358,29 @@ compute($a, $b, bigger($x, $y));
 function bigger(number $x, number $y) {
   return ($x > $y) ? $x : 'the second';
 }
-function compute(number $a, number $b, number $c) : number {
+function compute(number $a, number $b, number $c) returns a number {
   return ($a + $b) / ($b * $c);
 }
-compute($a, $b, bigger($x, $y));
         </code></pre>
-        <p class="fragment bigtext">May or may not work</p>
+        <p class="fragment">May or may not work</p>
         <pre class="fragment font--16"><code class="php" data-trim>
-function bigger(number $x, number $y) : string {
+function bigger(number $x, number $y) returns a string {
   return ($x > $y) ? "the first" : "the second";
 }
-function compute(number $a, number $b, number $c) : number {
+function compute(number $a, number $b, number $c) returns a number {
   return ($a + $b) / ($b * $c);
 }
-compute($a, $b, bigger($x, $y));
         </code></pre>
-        <p class="fragment bigtext">Obviously wrong!</p>
+        <p class="fragment">Obviously wrong!</p>
         <pre class="fragment font--16"><code class="php" data-trim>
-function bigger(number $x, number $y) : number {
+function bigger(number $x, number $y) returns a number {
   return ($x > $y) ? 1 : 2;
 }
-function compute(number $a, number $b, number $c) : number {
+function compute(number $a, number $b, number $c) returns a number {
   return ($a + $b) / ($b * $c);
 }
-compute($a, $b, bigger($x, $y));
         </code></pre>
-        <p class="fragment bigtext">Cannot fail!</p>
+        <p class="fragment">Cannot fail!</p>
       </section>
       <section>
         <p class="bigtext">Tools can tell you that,<br />if you help them</p>
@@ -408,9 +395,9 @@ compute($a, $b, bigger($x, $y));
       <section>
         <h2>Type systems</h2>
         <div class="fragment">
-          <blockquote>A type system is a tractable syntactic method for proving
-            the absence of certain program behaviors by classifying phrases
-            according to the kinds of values they compute.</blockquote>
+          <blockquote>A type system is a tractable <em>syntactic method</em> for proving
+            the <em>absence of certain program behaviors</em> by classifying phrases
+            according to the <em>kinds of values</em> they compute.</blockquote>
           <p>&mdash;Benjamin Pierce, <a href="https://www.cis.upenn.edu/~bcpierce/tapl/">Types and Programming Languages</a></p>
         </div>
         <p class="fragment"><q>Semantic metadata about code we can analyze to find bugs</q></p>
@@ -449,6 +436,7 @@ compute($a, $b, bigger($x, $y));
           <ul>
             <li>I'm arguing you should use explicit static types</li>
             <li>PHP doesn't do type inference, so explicitness is needed</li>
+            <li>"Strong" typing is arbitrary</li>
           </ul>
         </aside>
       </section>
@@ -457,8 +445,8 @@ compute($a, $b, bigger($x, $y));
       <section>
         <h2>Types in PHPractice</h2>
       </section>
-      <section>
-        <pre class="font--18"><code class="php" data-trim>
+      <section data-transition="slide-in fade-out">
+        <pre class="font--20"><code class="php" data-trim>
 function compute_shipping($src, $user) {
   $dest = $user['addres'];
 
@@ -471,9 +459,9 @@ function distance_between($src, $dest) {
   // ...
 }
 
-compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
         </code></pre>
-        <p class="bigtext fragment">HTTP Referer header, anyone?</p>
+        <p class="fragment">HTTP Referer header, anyone?</p>
         <aside class="notes">
           <ul>
             <li>'addres' may not be a typo</li>
@@ -482,8 +470,8 @@ compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
           </ul>
         </aside>
       </section>
-      <section>
-        <pre class="font--18"><code class="php" data-trim>
+      <section data-transition="fade-in">
+        <pre class="font--20"><code class="php" data-trim>
 function compute_shipping($src, $user) {
   $dest = $user['address'];
 
@@ -492,7 +480,7 @@ function compute_shipping($src, $user) {
   return $distance * .5; // 50 cents/mile
 }
 
-compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -501,8 +489,8 @@ compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
           </ul>
         </aside>
       </section>
-      <section>
-        <pre class="font--18"><code class="php" data-trim>
+      <section data-transition="fade-in">
+        <pre class="font--20"><code class="php" data-trim>
 function compute_shipping($src, $user) {
   $dest = $user['address'];
 
@@ -512,7 +500,7 @@ function compute_shipping($src, $user) {
 }
 
 $user = 123;
-compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -521,8 +509,8 @@ compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
           </ul>
         </aside>
       </section>
-      <section>
-        <pre class="font--18"><code class="php" data-trim>
+      <section data-transition="fade-in">
+        <pre class="font--20"><code class="php" data-trim>
 function compute_shipping($src, array $user) {
   $dest = $user['address'];
 
@@ -532,7 +520,7 @@ function compute_shipping($src, array $user) {
 }
 
 $user = 123;
-compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -541,8 +529,8 @@ compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
           </ul>
         </aside>
       </section>
-      <section>
-        <pre class="font--18"><code class="php" data-trim>
+      <section data-transition="fade-in">
+        <pre class="font--20"><code class="php" data-trim>
 function compute_shipping($src, array $user) {
   $dest = $user['address'];
 
@@ -552,7 +540,7 @@ function compute_shipping($src, array $user) {
 }
 
 $user = ['id' => 123];
-compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -560,7 +548,7 @@ compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
           </ul>
         </aside>
       </section>
-      <section>
+      <section data-transition="fade-in">
         <pre class="font--18"><code class="php" data-trim>
 class User {
   public $id;
@@ -582,7 +570,7 @@ function compute_shipping($src, User $user) {
 
 $user = new User(/*...*/);
 
-compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -591,7 +579,7 @@ compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
           </ul>
         </aside>
       </section>
-      <section>
+      <section data-transition="fade-in">
         <pre class="font--18"><code class="php" data-trim>
 function compute_shipping($src, User $user) {
   $dest = $user->address;
@@ -608,7 +596,7 @@ $user = new User(123, [
   'zip' => 60614,
 ]);
 
-compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
+compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
         </code></pre>
         <p class="fragment">Does this still work? Up to <code>distance_between()</code></p>
         <aside class="notes">
@@ -618,7 +606,7 @@ compute_shipping('123 Warehouse St., Las Vegas, NV', $user);
           </ul>
         </aside>
       </section>
-      <section>
+      <section data-transition="fade-in">
         <pre class="font--16"><code class="php" data-trim>
 class User {
   public $id;
@@ -637,9 +625,7 @@ class Address {
   public $zip;
 }
 
-function distance_between(Address $src, Address $dest) {
-  // ...
-}
+function distance_between(Address $src, Address $dest) { /* ... */ }
 
 function compute_shipping($src, User $user) {
   $dest = $user->address;
@@ -665,7 +651,7 @@ compute_shipping($src, $user);
           </ul>
         </aside>
       </section>
-      <section>
+      <section data-transition="fade-in slide-out">
         <pre class="font--18"><code class="php" data-trim>
 class User {
   protected $id;
@@ -795,7 +781,7 @@ class Address implements AddressInterface {
         </aside>
       </section>
       <section>
-        <p class="bigtext"><a href="http://www.garfieldtech.com/blog/empty-return-values">Returning false on a getter</a> is a<br />big 'screw you' to your users</p>
+        <p class="bigtext"><a href="http://www.garfieldtech.com/blog/empty-return-values">Returning false on error</a> is a<br />big 'screw you' to your users</p>
         <aside class="notes">
           <ul>
             <li>Undermines type expectations</li>
@@ -851,7 +837,7 @@ compute_shipping($src, $user);
           </ul>
         </aside>
       </section>
-      <section>
+      <section data-transition="slide-in fade-out">
         <pre class="font--18"><code class="php" data-trim>
 function compute_shipping($src, AddressInterface $dest) {
   $distance = distance_between($src, $dest);
@@ -869,7 +855,7 @@ $user = new User(123, $u_address);
 $src = new Address(); // ...
 compute_shipping($src, $user->getAddress());
         </code></pre>
-        <p class="fragment">What about distance_between()?</p>
+        <p class="fragment">What does distance_between() return?</p>
         <aside class="notes">
           <ul>
             <li>Could have made that change before, but more obvious when typed</li>
@@ -877,7 +863,7 @@ compute_shipping($src, $user->getAddress());
           </ul>
         </aside>
       </section>
-      <section>
+      <section data-transition="fade-in">
         <pre class="font--18"><code class="php" data-trim>
 function compute_shipping(AddressInterface $src, AddressInterface $dest) : float {
   $distance = distance_between($src, $dest);
@@ -977,7 +963,7 @@ class Address implements AddressInterface {
 $u_address = new Address('45 Hull St', 'Boston', 'MA', 02113);
 $user = new User(123, $u_address);
 
-$src = new Address('123 Warehouse St.', 'Las Vegas', 'NV', '');
+$src = new Address('4455 Paradise Rd', 'Las Vegas', 'NV', 89169);
 compute_shipping($src, $user->getAddress());
         </code></pre>
         <aside class="notes">
@@ -990,21 +976,14 @@ compute_shipping($src, $user->getAddress());
       <section>
         <h2>Strict vs Weak mode</h2>
         <p class="fragment">Weak by default</p>
-        <aside class="notes">
-          <ul>
-            <li>PHP used to auto-coercing, because web</li>
-            <li>Unsafe</li>
-            <li>Undermines type checking</li>
-          </ul>
-        </aside>
-      </section>
-      <section>
-        <h2>Casting in weak mode</h2>
-        <p>* string -> int may E_NOTICE</p>
+        <p class="fragment">* string -> int may E_NOTICE</p>
         <aside class="notes">
           <ul>
             <li>Casts like we're used to</li>
+            <li>PHP used to auto-coercing, because web</li>
+            <li>Unsafe</li>
             <li>String -> int notice if non-numeric.</li>
+            <li>Undermines type checking</li>
           </ul>
         </aside>
       </section>
@@ -1044,7 +1023,7 @@ declare(strict_types=1);
 $u_address = new Address('45 Hull St', 'Boston', 'MA', 02113);
 $user = new User(123, $u_address);
 
-$src = new Address('123 Warehouse St.', 'Las Vegas', 'NV', '');
+          $src = new Address('4455 Paradise Rd', 'Las Vegas', 'NV', 89169);
 compute_shipping($src, $user->getAddress());
         </code></pre>
         <p class="fragment">Affects calls and returns <em>from</em> this file</p>
@@ -1067,7 +1046,7 @@ compute_shipping($src, $user->getAddress());
       <section>
         <h2>Using strict types</h2>
         <p class="fragment bigtext">90% of the time</p>
-        <p class="fragment bigtext">(Everywhere except IO)</p>
+        <p class="fragment bigtext">(Everywhere except Input)</p>
         <aside class="notes">
           <ul>
             <li>Catches the most bugs</li>
@@ -1130,12 +1109,22 @@ class CatInTheHat {
       </section>
       <section>
         <h2>So, testing?</h2>
-        <p><q>Program testing can be used to show the presence of bugs, but never to show their absence.</q></p>
-        <p>&mdash; Edsger W. Dijkstra</p>
+        <div class="fragment">
+          <blockquote>Program testing can be used to show the presence of bugs, but never to show their absence.</blockquote>
+          <p>&mdash; Edsger W. Dijkstra</p>
+        </div>
         <p class="fragment">Testing will accept invalid programs!</p>
       </section>
       <section>
-        <p class="fragment">Type first, then test</p>
+        <blockquote>
+          <p>Testing: establishes upper bounds on correctness</p>
+          <p>Proof: establishes lower bounds on correctness</p>
+        </blockquote>
+        <p>&mdash;<a href="https://cdsmith.wordpress.com/2011/01/09/an-old-article-i-wrote/">Chris Smith</a></p>
+        <p class="fragment">Typing is a form of automated proof</p>
+      </section>
+      <section>
+        <p>Type first, then test</p>
         <aside class="notes">
           <ul>
             <li>Strict typing requires fewer tests</li>
@@ -1157,18 +1146,18 @@ class CatInTheHat {
         </aside>
       </section>
     </section>
-    <section id="resources">
-      <h2>Further reading</h2>
-      <ul>
-        <li><a href="http://computationbook.com/">Understanding Computation</a>, by Tom Stuart</li>
-        <li><a href="https://cdsmith.wordpress.com/2011/01/09/an-old-article-i-wrote/">What to know before debating type systems</a>, by Chris Smith</li>
-      </ul>
-    </section>
     <section id="final">
       <h2>Larry Garfield</h2>
       <p>Senior Architect, <a href="http://www.palantir.net/">Palantir.net</a></p>
       <p>Let's Make Something Good Together.</p>
       <p>Keep tabs on our work at <a href="http://twitter.com/Palantir">@Palantir</a></p>
+      <div class="fragment" style="margin-top: 1em;">
+        <h2>Further reading</h2>
+        <ul>
+          <li><a href="http://computationbook.com/">Understanding Computation</a>, by Tom Stuart</li>
+          <li><a href="https://cdsmith.wordpress.com/2011/01/09/an-old-article-i-wrote/">What to know before debating type systems</a>, by Chris Smith</li>
+        </ul>
+      </div>
     </section>
   </div>
 
