@@ -1,4 +1,4 @@
-What to expect from Drupal 8
+Outsourcing to your Compiler
 ===================
 
 Presentation by [Larry Garfield](http://www.garfieldtech.com)
