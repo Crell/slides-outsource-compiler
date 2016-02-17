@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Outsourcing to your compiler</title>
+  <title>Make your code do your job</title>
   <meta name="author" content="Larry Garfield">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -66,7 +66,7 @@
   <div class="slides">
 
     <section>
-      <h1>Outsourcing to<br />your compiler</h1>
+      <h1>Make your code<br />do your job</h1>
       <p>
         <small>Presented by <a href="http://www.garfieldtech.com/">Larry Garfield</a> (<a href="http://twitter.com/Crell">@Crell</a>)</small>
       </p>
@@ -151,9 +151,9 @@
         <h2>Make your tools do your job</h2>
       </section>
       <section>
-        <p>Your job is...</p>
-        <p class="fragment" id="write-code">To write code</p>
-        <p class="fragment" data-classer="write-code" data-classer-class="struck">To write correct (error-free) code</p>
+        <p class="bigtext">Your job is...</p>
+        <p class="bigtext fragment" id="write-code">To write code</p>
+        <p class="bigtext fragment" data-classer="write-code" data-classer-class="struck">To write correct (error-free) code</p>
       </section>
       <section>
         <h2>Be smarter</h2>
@@ -452,14 +452,14 @@ function compute_shipping($src, $user) {
 
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 function distance_between($src, $dest) {
   // ...
 }
 
-compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
+compute_shipping('2211 N. Elston Ave, Chicago, IL 60614', $user);
         </code></pre>
         <p class="fragment">HTTP Referer header, anyone?</p>
         <aside class="notes">
@@ -477,10 +477,10 @@ function compute_shipping($src, $user) {
 
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
-compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
+compute_shipping('2211 N. Elston Ave, Chicago, IL 60614', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -496,11 +496,11 @@ function compute_shipping($src, $user) {
 
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 $user = 123;
-compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
+compute_shipping('2211 N. Elston Ave, Chicago, IL 60614', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -516,11 +516,11 @@ function compute_shipping($src, array $user) {
 
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 $user = 123;
-compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
+compute_shipping('2211 N. Elston Ave, Chicago, IL 60614', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -536,15 +536,16 @@ function compute_shipping($src, array $user) {
 
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 $user = ['id' => 123];
-compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
+compute_shipping('2211 N. Elston Ave, Chicago, IL 60614', $user);
         </code></pre>
         <aside class="notes">
           <ul>
-            <li>And we still can't verify that it's correct</li>
+            <li>And we still can't verify that it's correct.</li>
+            <li>PHP arrays make terrible data structures.</li>
           </ul>
         </aside>
       </section>
@@ -565,12 +566,12 @@ function compute_shipping($src, User $user) {
 
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 $user = new User(/*...*/);
 
-compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
+compute_shipping('2211 N. Elston Ave, Chicago, IL 60614', $user);
         </code></pre>
         <aside class="notes">
           <ul>
@@ -586,7 +587,7 @@ function compute_shipping($src, User $user) {
 
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 $user = new User(123, [
@@ -596,7 +597,7 @@ $user = new User(123, [
   'zip' => 60614,
 ]);
 
-compute_shipping('4455 Paradise Rd, Las Vegas, NV 89169', $user);
+compute_shipping('2211 N. Elston Ave, Chicago, IL 60614', $user);
         </code></pre>
         <p class="fragment">Does this still work? Up to <code>distance_between()</code></p>
         <aside class="notes">
@@ -630,7 +631,7 @@ function distance_between(Address $src, Address $dest) { /* ... */ }
 function compute_shipping($src, User $user) {
   $dest = $user->address;
   $distance = distance_between($src, $dest);
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 $u_address = new Address();
@@ -672,7 +673,7 @@ function compute_shipping($src, User $user) {
 
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 $u_address = new Address(); // ...
@@ -814,7 +815,7 @@ class User {
 function compute_shipping(AddressInterface $src, User $user) {
   $dest = $user->getAddress();
   $distance = distance_between($src, $dest);
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 function distance_between(AddressInterface $src, AddressInterface $dest) {
@@ -839,10 +840,10 @@ compute_shipping($src, $user);
       </section>
       <section data-transition="slide-in fade-out">
         <pre class="font--18"><code class="php" data-trim>
-function compute_shipping($src, AddressInterface $dest) {
+function compute_shipping(AddressInterface $src, AddressInterface $dest) {
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 function distance_between(AddressInterface $src, AddressInterface $dest) {
@@ -868,7 +869,7 @@ compute_shipping($src, $user->getAddress());
 function compute_shipping(AddressInterface $src, AddressInterface $dest) : float {
   $distance = distance_between($src, $dest);
 
-  return $distance * .5; // 50 cents/mile
+  return $distance * .5; // 50 cents/km
 }
 
 function distance_between(AddressInterface $src, AddressInterface $dest) : int {
@@ -883,7 +884,7 @@ compute_shipping($src, $user->getAddress());
         </code></pre>
         <aside class="notes">
           <ul>
-            <li>Assume whole miles. Round up, because greedy.</li>
+            <li>Assume whole kilometers. Round up, because greedy.</li>
           </ul>
         </aside>
       </section>
@@ -909,7 +910,7 @@ compute_shipping($src, $user->getAddress());
       </section>
       <section>
         <h2>Full type list</h2>
-        <ul class="fragment">
+        <ul>
           <li>int</li>
           <li>float</li>
           <li>string</li>
@@ -963,7 +964,7 @@ class Address implements AddressInterface {
 $u_address = new Address('45 Hull St', 'Boston', 'MA', 02113);
 $user = new User(123, $u_address);
 
-$src = new Address('4455 Paradise Rd', 'Las Vegas', 'NV', 89169);
+$src = new Address('2211 N. Elston Ave', 'Chicago', 'IL', 60614);
 compute_shipping($src, $user->getAddress());
         </code></pre>
         <aside class="notes">
@@ -1023,7 +1024,7 @@ declare(strict_types=1);
 $u_address = new Address('45 Hull St', 'Boston', 'MA', 02113);
 $user = new User(123, $u_address);
 
-          $src = new Address('4455 Paradise Rd', 'Las Vegas', 'NV', 89169);
+$src = new Address('2211 N. Elston Ave', 'Chicago', 'IL', 60614);
 compute_shipping($src, $user->getAddress());
         </code></pre>
         <p class="fragment">Affects calls and returns <em>from</em> this file</p>
@@ -1062,7 +1063,7 @@ compute_shipping($src, $user->getAddress());
           <ul>
             <li>"Good code is self-documenting"</li>
             <li>Static type or you're a hypocrite</li>
-            <li>Static types can't go out of date like docblocs</li>
+            <li>Static types can't go out of date like docblocks</li>
           </ul>
         </aside>
       </section>
@@ -1121,10 +1122,10 @@ class CatInTheHat {
           <p>Proof: establishes lower bounds on correctness</p>
         </blockquote>
         <p>&mdash;<a href="https://cdsmith.wordpress.com/2011/01/09/an-old-article-i-wrote/">Chris Smith</a></p>
-        <p class="fragment">Typing is a form of automated proof</p>
+        <p class="bigtext fragment">Typing is a form of automated proof</p>
       </section>
       <section>
-        <p>Type first, then test</p>
+        <p class="bigtext">Type first, then test</p>
         <aside class="notes">
           <ul>
             <li>Strict typing requires fewer tests</li>
