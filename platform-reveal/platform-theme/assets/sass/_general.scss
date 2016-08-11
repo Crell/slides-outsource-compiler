@@ -5,6 +5,7 @@
  * @copyright Copyright (c) 2015 Palantir.net
  */
 
+%logo,
 .logo {
   position: absolute;
   bottom: 0;
@@ -26,11 +27,26 @@
   }
 }
 
+.logo--2 {
+  @extend %logo;
+  left: 245px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 200px;
+  height: 55px;
+  margin: 0 0 1em 1em !important;
+
+  &:after {
+    display: none;
+  }
+}
+
 .dark .reveal {
   color: $lt-gray;
 
   .logo:after {
-    background: url(../imgs/palantirnet-logo--reversed.svg);
+    background: url(../imgs/platform-logo-1c-white.svg);
+    background-repeat: no-repeat;
   }
 }
 
@@ -39,7 +55,8 @@
   color: $dk-gray;
 
   .logo:after {
-    background: url(../imgs/palantirnet-logo.svg);
+    background: url(../imgs/platform-logo-2c.svg);
+    background-repeat: no-repeat;
   }
 }
 

@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <link rel="stylesheet" href="css/reveal.css">
-  <link rel="stylesheet" href="palantir-reveal/palantirnet-theme/assets/css/styles.css" id="theme">
+  <link rel="stylesheet" href="platform-reveal/platform-theme/assets/css/styles.css" id="theme">
   <!-- Printing and PDF exports -->
   <script>
     var link = document.createElement( 'link' );
@@ -17,6 +17,9 @@
     link.href = window.location.search.match( /print-pdf/gi ) ? 'palantirnet-theme/assets/css/print/pdf.css' : 'palantirnet-theme/assets/css/print/paper.css';
     document.getElementsByTagName( 'head' )[0].appendChild( link );
   </script>
+
+  <script src="platform-reveal/classer.js"></script>
+
   <!--[if lt IE 9]>
   <script src="lib/js/html5shiv.js"></script>
   <![endif]-->
@@ -53,14 +56,12 @@
     }
   </style>
 
-  <script src="palantir-reveal/classer.js"></script>
-
-</head>
+  </head>
 <!-- Change body class to "dark" if you prefer a dark theme, or "light" if you'd rather have a light theme-->
 <body class="light">
 <div class="reveal">
   <div class="logo">
-    <p>Palantir.net</p>
+    <p>Platform.sh</p>
   </div>
   <!-- Any section element inside of this container is displayed as a slide -->
   <div class="slides">
@@ -78,7 +79,7 @@
       </div>
       <div>
         <ul style="text-wrap: none">
-          <li>Senior Architect, <a href="http://www.palantir.net/">Palantir.net</a></li>
+          <li>Director of Runtimes and Integrations, <a href="http://www.platform.sh/">Platform.sh</a></li>
           <li style="margin-top: 1em;">Drupal 8 Web Services Lead</li>
           <li style="margin-top: 1em;">Drupal Representative, <a href="http://www.php-fig.org/">PHP-FIG</a></li>
           <li style="margin-top: 1em;"><code>implements Huggable</code></li>
@@ -701,7 +702,7 @@ compute_shipping($src, $user);
         <h2>Return types</h2>
         <ul>
           <li class="fragment">New in PHP 7!</li>
-          <li class="fragment">Not nullable (good)</li>
+          <li class="fragment">Not nullable (good) <span class="fragment">(until 7.1)</span> </li>
         </ul>
         <aside class="notes">
           <ul>
@@ -1149,9 +1150,9 @@ class CatInTheHat {
     </section>
     <section id="final">
       <h2>Larry Garfield</h2>
-      <p>Senior Architect, <a href="http://www.palantir.net/">Palantir.net</a></p>
-      <p>Let's Make Something Good Together.</p>
-      <p>Keep tabs on our work at <a href="http://twitter.com/Palantir">@Palantir</a></p>
+      <p>Director of Runtimes and Integrations <a href="http://www.platform.sh/">Platform.sh</a></p>
+      <p>Continuous Deployment Cloud Hosting</p>
+      <p>Stalk us at <a href="http://twitter.com/Platformsh">@PlatformSH</a></p>
       <div class="fragment" style="margin-top: 1em;">
         <h2>Further reading</h2>
         <ul>
