@@ -126,9 +126,10 @@
           </ul>
         </aside>
       </section>
+      <!--
       <section data-background="assets/pinky-and-brain.jpg" data-credit="https://www.flickr.com/photos/happysteve/209730193">
-        <!--<img src="assets/pinky-and-brain.jpg" alt="Our brains grew!" data-credit="https://www.flickr.com/photos/happysteve/209730193" />-->
       </section>
+      -->
       <section data-background="assets/brain-power.jpg" data-credit="http://aboutmodafinil.com/">
         <!--<img src="assets/brain-power.jpg" alt="Our brains grew!" data-credit="http://aboutmodafinil.com/" />-->
         <aside class="notes">
@@ -179,11 +180,10 @@
           </ul>
         </aside>
       </section>
-    </section>
-    <section>
       <section>
         <h2>E_ALL</h2>
       </section>
+      <!--
       <section>
         <h2>What is wrong with this picture?</h2>
         <pre class="font--20"><code class="php" data-trim>
@@ -245,6 +245,7 @@ function showForm($user) {
           </ul>
         </aside>
       </section>
+      -->
       <section>
         <h2><a href="http://phpmd.org/">PHP Mess Detector</a></h2>
         <aside class="notes">
@@ -258,17 +259,11 @@ function showForm($user) {
     <section>
       <section>
         <h2>Add information to analyze</h2>
+        <p class="bigtext">Approximate your code</p>
         <aside class="notes">
           <ul>
             <li>Can we code in a way that makes bugs even more obvious?</li>
             <li>Include metadata about code, in code</li>
-          </ul>
-        </aside>
-      </section>
-      <section>
-        <p class="bigtext">Approximate your code</p>
-        <aside class="notes">
-          <ul>
             <li>Add "junior version" of code</li>
           </ul>
         </aside>
@@ -356,7 +351,7 @@ compute($a, $b, bigger($x, $y));
       <section>
         <h2>Put the abstract version in code</h2>
         <pre class="fragment font--16"><code class="php" data-trim>
-function bigger(number $x, number $y) {
+function bigger(number $x, number $y) returns number or string {
   return ($x > $y) ? $x : 'the second';
 }
 function compute(number $a, number $b, number $c) returns a number {
@@ -382,11 +377,9 @@ function compute(number $a, number $b, number $c) returns a number {
 }
         </code></pre>
         <p class="fragment">Cannot fail!</p>
-      </section>
-      <section>
-        <p class="bigtext">Tools can tell you that,<br />if you help them</p>
         <aside class="notes">
           <ul>
+            <li>Tools can tell you that, if you help them</li>
             <li>Tool is runtime, compiler, IDE, analysis tool, etc.</li>
           </ul>
         </aside>
@@ -696,9 +689,6 @@ compute_shipping($src, $user);
     </section>
     <section>
       <section>
-        <h2><code>&lt;aside></code></h2>
-      </section>
-      <section>
         <h2>Return types</h2>
         <ul>
           <li class="fragment">New in PHP 7!</li>
@@ -791,9 +781,6 @@ class Address implements AddressInterface {
             <li>User can't rely on types to avoid errors</li>
           </ul>
         </aside>
-      </section>
-      <section>
-        <h2><code>&lt;/aside></code></h2>
       </section>
     </section>
     <section>
@@ -896,21 +883,7 @@ compute_shipping($src, $user->getAddress());
         <p class="bigtext fragment"><q>Everyone here owes<br />Andrea Faulds and Anthony Ferrara a drink</q></p>
       </section>
       <section>
-        <h2>New type specs in PHP 7</h2>
-        <ul class="fragment">
-          <li>int</li>
-          <li>float</li>
-          <li>string</li>
-          <li>bool</li>
-        </ul>
-        <aside class="notes">
-          <ul>
-            <li>No integer/boolean</li>
-          </ul>
-        </aside>
-      </section>
-      <section>
-        <h2>Full type list</h2>
+        <h2>PHP 7 type list</h2>
         <ul>
           <li>int</li>
           <li>float</li>
@@ -919,10 +892,13 @@ compute_shipping($src, $user->getAddress());
           <li>array</li>
           <li>Any class name</li>
           <li>callable</li>
+          <li>iterable (PHP 7.1)</li>
+          <li>void (PHP 7.1, Return only)</li>
         </ul>
         <aside class="notes">
           <ul>
-            <li>All usable as parameters or returns</li>
+            <li>No integer/boolean</li>
+            <li>void is return only, rest for params and returns</li>
           </ul>
         </aside>
       </section>
